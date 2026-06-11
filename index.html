@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Herramientas | VConce</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #e0ecff 0, var(--bg) 38%, #ffffff 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 48px 24px 24px;
+      text-align: center;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      padding: 8px 14px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    }
+
+    h1 {
+      margin: 18px 0 8px;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      letter-spacing: -0.05em;
+    }
+
+    .subtitle {
+      margin: 0 auto;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 22px auto 64px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 1.35rem;
+    }
+
+    .card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .links {
+      display: grid;
+      gap: 12px;
+    }
+
+    a.tool {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+      background: #f9fafb;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px 15px;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    a.tool:hover {
+      transform: translateY(-2px);
+      border-color: #93c5fd;
+      background: var(--accent-soft);
+    }
+
+    .arrow {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    footer {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 860px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        padding-top: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">VConce · Herramientas</div>
+    <h1>Herramientas</h1>
+    <p class="subtitle">
+      Recursos organizados para consultar calendarios, ideas de evaluación interna y temarios IB.
+    </p>
+  </header>
+
+  <main>
+    <section class="grid" aria-label="Herramientas disponibles">
+      <article class="card">
+        <h2>Calendarios</h2>
+        <p>Planificaciones y calendarios de trabajo para Matemáticas y Física IB.</p>
+        <div class="links">
+          <a class="tool" href="Calendarios/CalendarioFIS_IB.html">
+            <span>Calendario Física IB</span>
+            <span class="arrow">→</span>
+          </a>
+          <a class="tool" href="Calendarios/CalendarioMAT_IB.html">
+            <span>Calendario Matemáticas IB</span>
+            <span class="arrow">→</span>
+          </a>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Ideas de IA</h2>
+        <p>Ideas para evaluaciones internas de Física y Matemáticas, organizadas por áreas.</p>
+        <div class="links">
+          <a class="tool" href="IdeasEI/ideas_IA_Fisica_NM_IB.html">
+            <span>Ideas IA Física NM IB</span>
+            <span class="arrow">→</span>
+          </a>
+          <a class="tool" href="IdeasEI/ideas_IA_Matematicas_MAE_NS_IB.html">
+            <span>Ideas IA Matemáticas MAE NS IB</span>
+            <span class="arrow">→</span>
+          </a>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Temarios IB</h2>
+        <p>Guías de contenidos y estructura de los cursos IB.</p>
+        <div class="links">
+          <a class="tool" href="TemarioIB/MAE_NS.html">
+            <span>Matemáticas MAE NS</span>
+            <span class="arrow">→</span>
+          </a>
+          <a class="tool" href="TemarioIB/Physics_NM.html">
+            <span>Física NM</span>
+            <span class="arrow">→</span>
+          </a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <span>VConce</span>
+    <a href="https://www.vconce.com">www.vconce.com</a>
+  </footer>
+</body>
+</html>
