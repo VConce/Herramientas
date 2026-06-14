@@ -37,12 +37,15 @@ main{max-width:1280px;margin:0 auto;padding:22px 18px 60px}
 .table-wrap{overflow:auto}
 table{border-collapse:separate;border-spacing:0;width:100%;font-size:14px}
 th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
-th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:#f8fafc;position:sticky;top:72px;z-index:5}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:#f8fafc;position:static;top:auto;z-index:auto}
 tr:hover td{background:#f8fbff}
+#rankingTable tr{cursor:pointer}
+#rankingTable tbody tr:hover td{background:#eef6ff}
 .rank{font-weight:800;color:var(--brand)}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line);background:#f8fafc;color:var(--muted)}
 .pill.good{background:var(--good);border-color:#86efac;color:var(--good-ink)} .pill.bad{background:var(--bad);border-color:#fecaca;color:var(--bad-ink)}
-.detail{grid-column:span 12;margin-top:16px}
+.detail{grid-column:span 12;margin-top:16px;scroll-margin-top:92px}
+#rankingCard{scroll-margin-top:92px}
 .detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,#fff,#f7fbff)}
 .participant-name{font-size:24px;font-weight:900;margin:0} .muted{color:var(--muted)}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
@@ -53,17 +56,17 @@ details.bet-group[open]{box-shadow:0 8px 18px rgba(15,23,42,.05)}
 summary{cursor:pointer;list-style:none;padding:13px 15px;background:#f8fafc;font-weight:800;display:flex;align-items:center;justify-content:space-between}
 summary::-webkit-details-marker{display:none}
 .bet-list{display:grid;gap:8px;padding:12px}
-.bet{display:grid;grid-template-columns:1.4fr 1fr .75fr 90px;gap:10px;align-items:center;border:1px solid var(--pending-b);border-left-width:7px;background:var(--pending);border-radius:14px;padding:10px}
+.bet{display:grid;grid-template-columns:1.35fr 1fr 1fr 110px;gap:10px;align-items:center;border:1px solid var(--pending-b);border-left-width:7px;background:var(--pending);border-radius:14px;padding:10px}
 .bet.good{background:var(--good);border-color:#bbf7d0;border-left-color:var(--good-b)}
 .bet.bad{background:var(--bad);border-color:#fecaca;border-left-color:var(--bad-b)}
 .bet.pending{background:white;border-color:var(--pending-b);border-left-color:#cbd5e1}
 .bet-title{font-weight:750} .bet-sub{font-size:12px;color:var(--muted);margin-top:3px}
-.bet-value{font-weight:650} .points{font-size:20px;font-weight:900;text-align:right}
+.bet-value{font-weight:650}.points-box{text-align:right}.points-label{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:2px}.points{font-size:22px;font-weight:900}.why{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.35}
 .sources{font-size:12px;line-height:1.5;color:var(--muted)} .sources a{color:var(--brand);text-decoration:none}
 .notice{background:#fffbeb;border:1px solid #fde68a;border-radius:16px;padding:12px 14px;font-size:13px;color:#713f12}
 .editor{width:100%;min-height:150px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#0f172a;color:#e5e7eb;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
 .hidden{display:none!important}
-@media(max-width:900px){.hero{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}.leaderboard,.side{grid-column:span 12}.bet{grid-template-columns:1fr}.points{text-align:left}}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}.leaderboard,.side{grid-column:span 12}.bet{grid-template-columns:1fr}.points-box{text-align:left}}
 @media(max-width:560px){.topbar{align-items:flex-start}.controls{width:100%}select,input,button{width:100%}.summary{grid-template-columns:1fr}}
 </style>
 </head>
@@ -125,20 +128,24 @@ const fmtScore = r => r ? `${r.homeGoals}-${r.awayGoals}` : '—';
 const fmtArr = a => Array.isArray(a) ? a.filter(Boolean).join(', ') : (a || '—');
 function scoreGroupMatch(m) {
   const r = DATA.actualResults[resultKey(m.home,m.away)];
-  if(!r) return {status:'pending',points:0,actual:'Pendiente',explain:'No jugado'};
+  if(!r) return {status:'pending',points:0,actual:'Pendiente',explain:'No jugado todavía'};
   const actualSign = signFromGoals(r.homeGoals,r.awayGoals);
   const predScore = parseScore(m.prediction);
   const predSign = String(m.sign || signFromScore(m.prediction) || '').toUpperCase();
   let points=0, bits=[];
-  if(predSign === actualSign) { points += 10; bits.push('signo +10'); }
-  if(predScore && predScore[0]===r.homeGoals && predScore[1]===r.awayGoals) { points += 25; bits.push('resultado +25'); }
-  return {status:points>0?'good':'bad',points,actual:fmtScore(r),explain:bits.join(' · ') || '0 puntos'};
+  if(predSign === actualSign) { points += 10; bits.push('signo correcto +10'); }
+  else { bits.push(`signo fallado: era ${actualSign}`); }
+  if(predScore && predScore[0]===r.homeGoals && predScore[1]===r.awayGoals) { points += 25; bits.push('resultado exacto +25'); }
+  else if(predScore) { bits.push('resultado exacto fallado'); }
+  else { bits.push('marcador no válido'); }
+  return {status:points>0?'good':'bad',points,actual:fmtScore(r),explain:bits.join(' · ')};
 }
 function scoreQuestion(q) {
   const a = DATA.actualQuestions[q.id];
   if(!a) return {status:'pending',points:0,actual:'Pendiente',explain:'Pendiente'};
   const ok = norm(q.answer) === norm(a.answer);
-  return {status:ok?'good':'bad',points: ok ? Number(q.points||0) : 0, actual:a.answer, explain: ok ? `+${q.points}` : '0 puntos'};
+  const source = a.source ? ` · ${a.source}` : '';
+  return {status:ok?'good':'bad',points: ok ? Number(q.points||0) : 0, actual:a.answer, explain: ok ? `respuesta correcta +${q.points}${source}` : `respuesta correcta: ${a.answer}${source}`};
 }
 function scoreParticipant(p) {
   const totals={total:0,group:0,questions:0,exact:0,signOnly:0,good:0,bad:0,pending:0};
@@ -185,18 +192,20 @@ function renderResults() {
   $('#resultsEditor').value=JSON.stringify(DATA.actualResults,null,2);
 }
 let currentFilter='all';
+function slug(v){ return norm(v).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
 function selectParticipant(i) {
   $('#participantSelect').value=String(i);
   renderParticipant(i);
   $('#participantCard').classList.remove('hidden');
+  history.replaceState(null,'','#participante-'+slug(DATA.participants[i].name));
   $('#participantCard').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function betRow({status,title,sub,bet,actual,points,explain}) {
-  return `<div class="bet ${status}" data-status="${status}" data-text="${esc(norm(title+' '+sub+' '+bet+' '+actual))}">
+  return `<div class="bet ${status}" data-status="${status}" data-text="${esc(norm(title+' '+sub+' '+bet+' '+actual+' '+explain))}">
     <div><div class="bet-title">${esc(title)}</div><div class="bet-sub">${esc(sub||'')}</div></div>
     <div><div class="bet-sub">Apuesta</div><div class="bet-value">${esc(bet||'—')}</div></div>
-    <div><div class="bet-sub">Real</div><div class="bet-value">${esc(actual||'Pendiente')}</div><div class="bet-sub">${esc(explain||'')}</div></div>
-    <div class="points">${points}</div>
+    <div><div class="bet-sub">Real / motivo</div><div class="bet-value">${esc(actual||'Pendiente')}</div><div class="why">${esc(explain||'')}</div></div>
+    <div class="points-box"><div class="points-label">Puntos</div><div class="points">${points}</div></div>
   </div>`;
 }
 function renderSection(title, rows, open=true) {
@@ -228,11 +237,12 @@ function renderParticipant(i) {
   const bonusRows=p.bonus.map(b=>({status:'pending',title:b.question,sub:b.section,bet:fmtArr(b.answer),actual:'Pendiente',points:0,explain:b.rules}));
   sections.push(renderSection('Alineación, goleadores y porteros', bonusRows, false));
   $('#participantCard').innerHTML=`
-    <div class="detail-head"><div><h2 class="participant-name">${esc(p.name)}</h2><div class="muted">Archivo: ${esc(p.file)} · Hojas: ${esc(p.sheet1)} / ${esc(p.sheet2)}</div></div>
+    <div class="detail-head"><div><h2 class="participant-name">${esc(p.name)}</h2><div class="muted">Hoja del participante · Archivo: ${esc(p.file)} · Hojas: ${esc(p.sheet1)} / ${esc(p.sheet2)}</div><div class="tabs"><button id="backToRanking">← Volver a clasificación</button></div></div>
     <div class="summary" style="min-width:420px"><div class="kpi"><div class="num">${s.total}</div><div class="lab">puntos</div></div><div class="kpi"><div class="num">${s.exact}</div><div class="lab">resultados exactos</div></div><div class="kpi"><div class="num">${s.good}</div><div class="lab">apuestas con puntos</div></div><div class="kpi"><div class="num">${s.bad}</div><div class="lab">fallos</div></div></div>
     <div class="tabs"><button data-filter="all" class="active">Todo</button><button data-filter="good">Aciertos</button><button data-filter="bad">Fallos</button><button data-filter="pending">Pendientes</button></div></div>
     <div class="bet-sections">${sections.join('')}</div>`;
   $('#participantCard').querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{currentFilter=btn.dataset.filter; $('#participantCard').querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b===btn)); applyFilters();}));
+  const back=$('#backToRanking'); if(back) back.addEventListener('click',()=>{history.replaceState(null,'','#clasificacion'); $('#rankingCard').scrollIntoView({behavior:'smooth',block:'start'});});
   applyFilters();
 }
 function applyFilters() {
@@ -247,12 +257,18 @@ function init() {
   participantOptions(); renderKPIs(); renderRanking(); renderResults();
   $('#participantSelect').addEventListener('change', e=>{ if(e.target.value==='') return; selectParticipant(Number(e.target.value)); });
   $('#searchInput').addEventListener('input', applyFilters);
-  $('#showRanking').addEventListener('click',()=>{ $('#rankingCard').scrollIntoView({behavior:'smooth',block:'start'}); });
+  $('#showRanking').addEventListener('click',()=>{history.replaceState(null,'','#clasificacion'); $('#rankingCard').scrollIntoView({behavior:'smooth',block:'start'}); });
   $('#toggleEditor').addEventListener('click',()=>$('#resultsEditor').classList.toggle('hidden'));
   $('#recalcBtn').addEventListener('click',()=>{
     try { DATA.actualResults=JSON.parse($('#resultsEditor').value); renderKPIs(); renderRanking(); renderResults(); const val=$('#participantSelect').value; if(val!=='') renderParticipant(Number(val)); }
     catch(e) { alert('JSON de resultados no válido: '+e.message); }
   });
+  const hash=decodeURIComponent(location.hash||'');
+  if(hash.startsWith('#participante-')) {
+    const wanted=hash.replace('#participante-','');
+    const idx=DATA.participants.findIndex(p=>slug(p.name)===wanted || slug(p.fileName||'')===wanted);
+    if(idx>=0) setTimeout(()=>selectParticipant(idx),50);
+  }
 }
 init();
 </script>
