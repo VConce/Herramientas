@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Separador y anonimizador de examenes</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <h1>Separador y anonimizador de examenes</h1>
+        <p>Procesamiento local: el PDF no sale de este ordenador.</p>
+      </div>
+      <span id="offlineBadge" class="badge">Offline</span>
+    </header>
+
+    <section class="panel">
+      <h2>1. PDF de entrada</h2>
+      <label id="dropZone" class="drop-zone" for="pdfInput">
+        <strong>Arrastra el PDF aqui</strong>
+        <span>o pulsa para seleccionarlo</span>
+      </label>
+      <input id="pdfInput" type="file" accept="application/pdf,.pdf" hidden>
+      <div id="fileInfo" class="file-info">Ningun archivo cargado.</div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>2. Deteccion de examenes</h2>
+        <div class="field">
+          <label for="markerPhrase">Frase o texto distintivo de portada</label>
+          <input id="markerPhrase" type="text" value="maxima sofisticacion">
+        </div>
+        <div class="field">
+          <label for="extraKeywords">Palabras clave adicionales</label>
+          <textarea id="extraKeywords" rows="3">nombre
+nota
+puntos</textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="keywordRequirement">Coincidencia minima</label>
+            <select id="keywordRequirement">
+              <option value="all">Todas las palabras clave</option>
+              <option value="2" selected>Al menos 2</option>
+              <option value="1">Al menos 1</option>
+              <option value="0">Ignorar palabras clave</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="manualStarts">Portadas manuales</label>
+            <input id="manualStarts" type="text" placeholder="Ej.: 1, 5, 9">
+          </div>
+        </div>
+        <div class="actions">
+          <button id="detectButton" class="primary" disabled>Detectar examenes</button>
+          <button id="clearButton" type="button">Limpiar</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>3. Anonimizado</h2>
+        <label class="check-row">
+          <input id="anonymizeToggle" type="checkbox">
+          <span>Anonimizar nombres</span>
+        </label>
+        <div class="field-row">
+          <div class="field">
+            <label for="codePrefix">Prefijo de codigo</label>
+            <input id="codePrefix" type="text" value="COD">
+          </div>
+          <div class="field">
+            <label for="applyMode">Paginas a cubrir</label>
+            <select id="applyMode">
+              <option value="cover" selected>Solo portada de cada alumno</option>
+              <option value="all">Todas las paginas del alumno</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="nameSearchMode">Localizacion del nombre</label>
+          <select id="nameSearchMode">
+            <option value="auto">Buscar casilla Nombre con OCR</option>
+            <option value="autoFallback" selected>Buscar con OCR y usar zona manual si falla</option>
+            <option value="manual">Usar siempre la zona manual</option>
+          </select>
+        </div>
+        <div class="zone-grid">
+          <label>X %<input id="zoneX" type="number" min="0" max="100" step="0.5" value="8"></label>
+          <label>Y %<input id="zoneY" type="number" min="0" max="100" step="0.5" value="8"></label>
+          <label>Ancho %<input id="zoneW" type="number" min="1" max="100" step="0.5" value="42"></label>
+          <label>Alto %<input id="zoneH" type="number" min="1" max="100" step="0.5" value="8"></label>
+        </div>
+        <div class="actions">
+          <button id="findNamesButton" type="button" disabled>Buscar nombres</button>
+        </div>
+        <p class="note">El modo OCR busca la etiqueta Nombre o Apellidos y calcula la zona a tapar. La zona manual queda como respaldo.</p>
+      </div>
+    </section>
+
+    <section class="panel preview-panel">
+      <div class="section-head">
+        <h2>Vista previa de zona</h2>
+        <button id="renderPreviewButton" type="button" disabled>Actualizar vista</button>
+      </div>
+      <div class="preview-wrap">
+        <canvas id="previewCanvas"></canvas>
+        <div id="zoneOverlay" class="zone-overlay"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <h2>Revision</h2>
+        <button id="zipButton" class="primary" disabled>Generar ZIP</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Paginas</th>
+              <th>Nombre detectado o editable</th>
+              <th>Codigo</th>
+            </tr>
+          </thead>
+          <tbody id="rangesBody">
+            <tr><td colspan="4">Carga un PDF y detecta los examenes.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="progress-line">
+        <span id="progressText">Listo.</span>
+        <span id="progressPercent">0%</span>
+      </div>
+      <progress id="progressBar" value="0" max="100"></progress>
+      <pre id="logBox" class="log">Listo. Carga un PDF para empezar.</pre>
+    </section>
+  </main>
+
+  <script src="./vendor/pdf-lib/pdf-lib.min.js"></script>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
